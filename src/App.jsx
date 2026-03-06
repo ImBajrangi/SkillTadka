@@ -1,15 +1,10 @@
-import { useRef, useState } from 'react';
-import usePdfViewer from './hooks/usePdfViewer';
+import React, { useState, useRef } from 'react';
+import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
-import Header from './components/Header';
-import Toolbar from './components/Toolbar';
-import DropZone from './components/DropZone';
-import PDFCanvas from './components/PDFCanvas';
-import Sidebar from './components/Sidebar';
-import Loader from './components/Loader';
+import usePdfViewer from './hooks/usePdfViewer';
+import PDFViewer from './components/PDFViewer';
 import ErrorModal from './components/ErrorModal';
 import Background from './components/Background';
-
 import Marketplace from './components/Marketplace';
 import About from './components/About';
 import Footer from './components/Footer';
@@ -17,7 +12,7 @@ import Footer from './components/Footer';
 export default function App() {
   const fileInputRef = useRef(null);
   const viewer = usePdfViewer();
-  const [view, setView] = useState('landing'); // 'landing', 'marketplace', 'viewer'
+  const [view, setView] = useState('landing');
 
   const handleStartLearning = () => {
     setView('marketplace');
@@ -36,103 +31,44 @@ export default function App() {
     }
   };
 
-  // ── View Rendering ──
-
-  if (view === 'landing') {
-    return (
-      <div className="light-theme">
-        <LandingPage onStartLearning={handleStartLearning} />
-      </div>
-    );
-  }
-
   return (
     <div className={viewer.isDark ? 'dark-theme' : 'light-theme'}>
-      <Background />
-      <div className="app-container">
-        <Header
-          fileName={viewer.fileName}
-          isDark={viewer.isDark}
-          toggleTheme={viewer.toggleTheme}
-          onOpenFile={() => fileInputRef.current?.click()}
-          currentView={view}
-          setView={setView}
-        />
+      <div className="app-container" style={{ position: 'relative', minHeight: '100vh' }}>
+        <Background />
+        
+        {/* Main Glass Layout wrapper */}
+        <div className="liquid-glass-root" style={{ position: 'relative', zindex: 1 }}>
+          <Navbar 
+            onReaderClick={openReader} 
+            pdfLoaded={viewer.pdfLoaded} 
+            setView={setView} 
+            currentView={view} 
+          />
+
+          <main className="content-area">
+            {view === 'landing' && <LandingPage onStartLearning={handleStartLearning} />}
+            {view === 'marketplace' && <Marketplace onFileSelect={handleFileSelect} />}
+            {view === 'viewer' && (
+              <PDFViewer 
+                file={viewer.selectedFile} 
+                onClose={() => setView('marketplace')} 
+              />
+            )}
+            {view === 'about' && <About />}
+          </main>
+
+          <Footer />
+        </div>
+
         <input
-          ref={fileInputRef}
           type="file"
+          ref={fileInputRef}
+          onChange={(e) => handleFileSelect(e.target.files[0])}
           accept="application/pdf"
           style={{ display: 'none' }}
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleFileSelect(f);
-          }}
         />
-
-        <main className={`${view === 'marketplace' ? 'marketplace-view' : view === 'about' ? 'about-view' : 'viewer-view'} ${viewer.isFocusMode ? 'focus-mode-active' : ''}`}>
-          {view === 'marketplace' ? (
-            <Marketplace onOpenReader={openReader} />
-          ) : view === 'about' ? (
-            <About />
-          ) : (
-            <>
-              <Toolbar
-                scale={viewer.scale}
-                pageNum={viewer.pageNum}
-                totalPages={viewer.totalPages}
-                zoomIn={viewer.zoomIn}
-                zoomOut={viewer.zoomOut}
-                prevPage={viewer.prevPage}
-                nextPage={viewer.nextPage}
-                rotate={viewer.rotate}
-                toggleFullscreen={viewer.toggleFullscreen}
-                downloadPDF={viewer.downloadPDF}
-                printPDF={viewer.printPDF}
-                pdfLoaded={viewer.pdfLoaded}
-                isFocusMode={viewer.isFocusMode}
-                toggleFocusMode={viewer.toggleFocusMode}
-                searchText={viewer.searchText}
-                handleSearch={viewer.handleSearch}
-              />
-
-              <PDFCanvas
-                canvasRef={viewer.canvasRef}
-                textLayerRef={viewer.textLayerRef}
-                pageNum={viewer.pageNum}
-                totalPages={viewer.totalPages}
-                prevPage={viewer.prevPage}
-                nextPage={viewer.nextPage}
-                pdfLoaded={viewer.pdfLoaded}
-                isFocusMode={viewer.isFocusMode}
-              />
-
-              <DropZone
-                onFileSelect={handleFileSelect}
-                visible={!viewer.pdfLoaded}
-              />
-            </>
-          )}
-        </main>
-
-        {(view === 'marketplace' || view === 'about') && <Footer />}
-
-        {view === 'viewer' && (
-          <Sidebar
-            pdfDoc={viewer.pdfDoc}
-            pageNum={viewer.pageNum}
-            goToPage={viewer.goToPage}
-            isOpen={viewer.sidebarOpen}
-            onClose={viewer.toggleSidebar}
-            outline={viewer.outline}
-            searchIndices={viewer.searchIndices}
-            searchText={viewer.searchText}
-            toggleSidebar={viewer.toggleSidebar}
-          />
-        )}
+        <ErrorModal error={viewer.error} onClose={viewer.clearError} />
       </div>
-
-      <Loader visible={viewer.isLoading} />
-      <ErrorModal message={viewer.error} onClose={viewer.clearError} />
     </div>
   );
 }
