@@ -4,14 +4,19 @@ import Sidebar from './Sidebar';
 import Toolbar from './Toolbar';
 import PDFCanvas from './PDFCanvas';
 import Loader from './Loader';
+import ErrorModal from './ErrorModal';
 
 export default function PDFViewer({ file, onClose }) {
     const viewer = usePdfViewer();
 
-    // Load the file when it changes
+    // Load the file when it changes or fall back to Supabase
     useEffect(() => {
         if (file) {
             viewer.handleFileSelect(file);
+        } else {
+            // Default Supabase PDF for Demo Reader
+            const defaultPdfUrl = 'https://tilimltxgeucefxzerqi.supabase.co/storage/v1/object/public/pdf/Clinical%20Ai%20Architecture%20Diagrams.pdf';
+            viewer.loadFromUrl(defaultPdfUrl, 'Clinical AI Architecture');
         }
     }, [file]);
 
@@ -74,6 +79,7 @@ export default function PDFViewer({ file, onClose }) {
                     <button className="close-viewer-btn" onClick={onClose} title="Close Reader">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                     </button>
+                    <ErrorModal error={viewer.error} onClose={viewer.clearError} />
                 </div>
             </div>
         </div>

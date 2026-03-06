@@ -3788,3 +3788,49 @@ main {
 .viewer-container.focus-mode .canvas-wrapper {
   padding: 0;
 }
+
+/* --- Viewer Empty State & Loading Polish --- */
+.viewer-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 1.5rem;
+  color: var(--text-secondary);
+  animation: fadeIn 0.5s var(--ease-out);
+}
+
+.spinner-glow {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--accent-subtle);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite, glowPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.2);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(79, 70, 229, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(79, 70, 229, 0.4); }
+}
+
+.viewer-empty-state p {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: 0.95rem;
+  background: linear-gradient(90deg, var(--text-secondary), var(--text-primary), var(--text-secondary));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerText 3s linear infinite;
+}
+
+@keyframes shimmerText {
+  to { background-position: 200% center; }
+}
