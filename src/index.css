@@ -61,9 +61,14 @@
   --studio-gold-dim: rgba(234, 179, 8, 0.4);
   --electric-indigo: #6366F1;
   --deep-violet: #4F46E5;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* ── Liquid Glass Tokens ── */
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-tint: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shine: inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5);
   --glass-blur: 24px;
+  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
   --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
   --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
   --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
@@ -280,18 +285,40 @@ body {
    HEADER
    ═══════════════════════════════════════════ */
 .app-header {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-bottom: 1px solid var(--glass-border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   padding: 0.8rem 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
+  overflow: hidden;
+  isolation: isolate;
   animation: headerIn 0.5s var(--ease-out);
+}
+
+/* Liquid Glass distortion layer */
+.app-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  filter: url(#glass-distortion);
+}
+
+/* Liquid Glass tint */
+.app-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--glass-tint);
+  pointer-events: none;
 }
 
 .app-header>div {
@@ -475,16 +502,38 @@ main {
    TOOLBAR — Clean entrance
    ═══════════════════════════════════════════ */
 .toolbar {
-  background: var(--bg-glass);
-  backdrop-filter: blur(var(--blur));
-  -webkit-backdrop-filter: blur(var(--blur));
-  border: 1px solid var(--border);
+  position: relative;
+  isolation: isolate;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: 0.5rem 0.85rem;
   display: none;
   align-items: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
   justify-content: space-between;
+  overflow: hidden;
+}
+
+.toolbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  filter: url(#glass-distortion);
+  border-radius: inherit;
+}
+
+.toolbar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--glass-tint);
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 .toolbar-section {
@@ -1205,16 +1254,17 @@ main {
   top: 0;
   width: 320px;
   height: 100vh;
-  background: var(--bg-glass);
-  backdrop-filter: blur(var(--blur-heavy));
-  -webkit-backdrop-filter: blur(var(--blur-heavy));
-  border-left: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-left: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shine);
   transition: right 0.3s var(--ease-out);
   z-index: 1200;
-  /* Above app header (1000) */
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  isolation: isolate;
 }
 
 .sidebar.open {
@@ -2286,17 +2336,30 @@ main {
 }
 
 .bento-card {
-  background: var(--bg-card);
+  background: var(--glass-bg);
   border-radius: 32px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
   padding: 3rem;
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  isolation: isolate;
+}
+
+.bento-card>.bento-glass-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  filter: url(#glass-distortion);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 .bento-privacy {
@@ -2327,9 +2390,10 @@ main {
 }
 
 .bento-card:hover {
-  /* transform: translateY(-4px); */
-  border-color: var(--accent-light);
-  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08), var(--shadow-glow);
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: var(--glass-shine), 0 12px 32px rgba(31, 38, 135, 0.2), var(--shadow-glow);
 }
 
 .bento-glass-overlay {
@@ -3052,18 +3116,22 @@ main {
 }
 
 .bento-item {
-  background: var(--bg-card);
+  background: var(--glass-bg);
   padding: 2.5rem;
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1.2rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
   transition: all 0.4s var(--ease);
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  isolation: isolate;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .bento-item::after {
@@ -3077,8 +3145,10 @@ main {
 }
 
 .bento-item:hover {
-  border-color: var(--accent-color);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: var(--glass-shine), 0 20px 40px rgba(31, 38, 135, 0.2);
+  transform: translateY(-4px);
 }
 
 .bento-item>* {
@@ -3117,17 +3187,23 @@ main {
 }
 
 .product-card {
-  background: var(--bg-card);
+  background: var(--glass-bg);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shine), var(--glass-shadow);
   transition: all 0.4s var(--ease);
   position: relative;
+  isolation: isolate;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .product-card:hover {
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
-  border-color: var(--accent-light);
+  box-shadow: var(--glass-shine), 0 30px 60px rgba(31, 38, 135, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .product-image {
@@ -3497,6 +3573,7 @@ main {
     grid-template-columns: 1fr;
   }
 }
+
 /* --- LIQUID GLASS THEME --- */
 
 :root {
@@ -3558,4 +3635,3 @@ main {
   transform: scale(1.02) !important;
   background: rgba(255, 255, 255, 0.2) !important;
 }
-
