@@ -20,6 +20,7 @@ export default function usePdfViewer() {
     const [searchIndices, setSearchIndices] = useState([]); // Array of { pageNum, text }
     const [currentSearchIndex, setCurrentSearchIndex] = useState(-1);
     const [outline, setOutline] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const pdfDataRef = useRef(null);
     const canvasRef = useRef(null);
@@ -159,6 +160,7 @@ export default function usePdfViewer() {
             setError('Please select a valid PDF file.');
             return;
         }
+        setSelectedFile(file);
         setFileName(file.name);
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -386,7 +388,7 @@ export default function usePdfViewer() {
         // State
         pdfDoc, pageNum, totalPages, scale, rotation,
         fileName, isLoading, error, isDark, sidebarOpen, pdfLoaded,
-        isFocusMode, searchText, searchIndices, outline,
+        isFocusMode, searchText, searchIndices, outline, selectedFile,
         canvasRef, textLayerRef,
         // Actions
         handleFileSelect, loadFromUrl, prevPage, nextPage,
