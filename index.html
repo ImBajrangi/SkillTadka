@@ -32,18 +32,61 @@
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "WebSite",
+        "@id": "https://edu.vrindopnishad.in/#website",
+        "name": "skillTadka",
+        "url": "https://edu.vrindopnishad.in/",
+        "publisher": { "@id": "https://vrindopnishad.in/#organization" },
+        "description": "Authentic PDF reading experience and digital Vedic library by Vrindopnishad."
+      },
+      {
         "@type": "WebPage",
         "@id": "https://edu.vrindopnishad.in/#webpage",
         "url": "https://edu.vrindopnishad.in/",
         "name": "skillTadka — Authentic PDF Reading Experience",
-        "isPartOf": { "@id": "https://vrindopnishad.in/#website" },
+        "isPartOf": { "@id": "https://edu.vrindopnishad.in/#website" },
         "description": "skillTadka is a modern, professional PDF viewer by Vrindopnishad."
       },
       {
-        "@type": "WebSite",
-        "@id": "https://vrindopnishad.in/#website",
-        "url": "https://vrindopnishad.in/",
-        "name": "Vrindopnishad"
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://vrindopnishad.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "skillTadka",
+            "item": "https://edu.vrindopnishad.in/"
+          }
+        ]
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "name": "skillTadka Navigation",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Library",
+            "url": "https://edu.vrindopnishad.in/#library"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Reader",
+            "url": "https://edu.vrindopnishad.in/#reader"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "About",
+            "url": "https://vrindopnishad.in/Vrindopnishad%20Web/about%20code/main/about.html"
+          }
+        ]
       },
       {
         "@type": "Organization",
